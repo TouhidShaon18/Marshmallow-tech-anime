@@ -123,7 +123,9 @@ export function ResultCard({
           Retake
         </button>
         <a
-          href="/anime-collection"
+          href="https://marshmallow-tech.com/"
+          target="_blank"
+          rel="noopener noreferrer"
           className="inline-flex min-h-12 items-center justify-center gap-2 rounded-2xl bg-pink px-4 py-3 text-sm font-black text-charcoal shadow-lg transition hover:-translate-y-0.5"
         >
           <ShoppingBag aria-hidden="true" className="h-4 w-4" />

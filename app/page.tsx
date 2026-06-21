@@ -270,7 +270,9 @@ export default function Home() {
             </span>
           </a>
           <a
-            href="/anime-collection"
+            href="https://marshmallow-tech.com/"
+            target="_blank"
+            rel="noopener noreferrer"
             className="hidden rounded-2xl bg-white/75 px-4 py-3 text-sm font-black text-charcoal shadow-lg backdrop-blur transition hover:-translate-y-0.5 sm:inline-flex"
           >
             Build My Setup
