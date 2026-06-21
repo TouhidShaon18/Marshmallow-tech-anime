@@ -2,6 +2,7 @@
 
 import { FormEvent, useCallback, useEffect, useRef, useState } from "react";
 import confetti from "canvas-confetti";
+import Image from "next/image";
 import { ArrowRight, Sparkles } from "lucide-react";
 import { QuizCard } from "@/components/QuizCard";
 import { ResultCard } from "@/components/ResultCard";
@@ -249,8 +250,15 @@ export default function Home() {
       <div className="mx-auto flex min-h-[calc(100vh-2.5rem)] w-full max-w-6xl flex-col">
         <header className="flex items-center justify-between gap-4 py-3">
           <a href="/" className="flex items-center gap-3">
-            <span className="grid h-11 w-11 place-items-center rounded-2xl bg-charcoal text-lg font-black text-white shadow-lg">
-              M
+            <span className="grid h-12 w-12 place-items-center rounded-2xl bg-white/85 p-1.5 shadow-lg backdrop-blur">
+              <Image
+                src="/brand/marshmallow-logo.png"
+                alt="Marshmallow Tech logo"
+                width={40}
+                height={40}
+                className="h-full w-full object-contain"
+                priority
+              />
             </span>
             <span>
               <span className="block text-sm font-black uppercase tracking-[0.18em] text-charcoal">

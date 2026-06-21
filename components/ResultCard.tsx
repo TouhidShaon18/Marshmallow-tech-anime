@@ -32,13 +32,25 @@ export function ResultCard({
         <div className="absolute inset-x-0 top-0 h-2 bg-gradient-to-r from-pink via-lavender to-electric" />
         <div className="relative">
           <div className="mb-5 flex items-center justify-between gap-4">
-            <div>
+            <div className="flex items-center gap-3">
+              <div className="grid h-12 w-12 shrink-0 place-items-center rounded-2xl bg-white p-1.5 shadow-sm ring-1 ring-charcoal/10">
+                <Image
+                  src="/brand/marshmallow-logo.png"
+                  alt="Marshmallow Tech logo"
+                  width={42}
+                  height={42}
+                  className="h-full w-full object-contain"
+                  priority
+                />
+              </div>
+              <div>
               <p className="text-xs font-black uppercase tracking-[0.18em] text-electric">
                 Marshmallow Tech
               </p>
               <h2 className="mt-1 text-2xl font-black text-charcoal">
                 {name}&apos;s Anime Match
               </h2>
+              </div>
             </div>
             <div className="rounded-2xl bg-charcoal px-3 py-2 text-center text-white">
               <span className="block text-2xl font-black">{percentage}%</span>

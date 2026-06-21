@@ -1,4 +1,5 @@
-import { ArrowLeft, Monitor, ShoppingBag, Sparkles } from "lucide-react";
+import Image from "next/image";
+import { ArrowLeft, Monitor, ShoppingBag } from "lucide-react";
 
 const picks = [
   "Anime desk mats",
@@ -22,7 +23,13 @@ export default function AnimeCollectionPage() {
         <section className="mt-10 grid gap-8 lg:grid-cols-[0.9fr_1.1fr] lg:items-center">
           <div>
             <div className="inline-flex items-center gap-2 rounded-full bg-white px-4 py-2 text-sm font-black text-electric shadow-lg">
-              <Sparkles aria-hidden="true" className="h-4 w-4" />
+              <Image
+                src="/brand/marshmallow-logo.png"
+                alt="Marshmallow Tech logo"
+                width={22}
+                height={22}
+                className="h-5 w-5 object-contain"
+              />
               Marshmallow Tech
             </div>
             <h1 className="mt-5 text-5xl font-black leading-none sm:text-6xl">
