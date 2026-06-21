@@ -266,20 +266,59 @@ export function addScores(total: TraitScores, addition: Partial<TraitScores>) {
 }
 
 export function getCharacterMatch(scores: TraitScores) {
-  const maxPossibleDistance = Math.sqrt(Object.keys(scores).length * 10 * 10);
+  const traits = Object.keys(scores) as Trait[];
+  const highestTraitScore = Math.max(...traits.map((trait) => scores[trait]), 1);
+  const profile = traits.reduce<TraitScores>(
+    (next, trait) => ({
+      ...next,
+      [trait]: Math.round((scores[trait] / highestTraitScore) * 10),
+    }),
+    { ...emptyScores },
+  );
+  const profileMagnitude = Math.sqrt(
+    traits.reduce((sum, trait) => sum + Math.pow(profile[trait], 2), 0),
+  );
+  const maxPossibleDistance = Math.sqrt(traits.length * 10 * 10);
+  const dominantTraits = [...traits]
+    .sort((a, b) => scores[b] - scores[a])
+    .slice(0, 2);
+
+  function tinyTieBreaker(characterId: string) {
+    const signature = traits.map((trait) => `${trait}:${scores[trait]}`).join("|");
+    const hash = `${signature}:${characterId}`.split("").reduce((sum, char) => {
+      return (sum * 31 + char.charCodeAt(0)) % 997;
+    }, 7);
+    return hash / 99700;
+  }
+
   const ranked = characters
     .map((character) => {
-      const distance = (Object.keys(scores) as Trait[]).reduce((sum, trait) => {
-        const normalized = Math.min(10, Math.round((scores[trait] / 10) * 2));
-        return sum + Math.pow(normalized - character.traits[trait], 2);
+      const distance = traits.reduce((sum, trait) => {
+        return sum + Math.pow(profile[trait] - character.traits[trait], 2);
       }, 0);
-      const similarity = Math.max(0.72, 1 - Math.sqrt(distance) / maxPossibleDistance);
+      const characterMagnitude = Math.sqrt(
+        traits.reduce((sum, trait) => sum + Math.pow(character.traits[trait], 2), 0),
+      );
+      const cosineSimilarity =
+        traits.reduce((sum, trait) => sum + profile[trait] * character.traits[trait], 0) /
+        Math.max(1, profileMagnitude * characterMagnitude);
+      const distanceSimilarity = 1 - Math.sqrt(distance) / maxPossibleDistance;
+      const dominantAlignment =
+        dominantTraits.reduce((sum, trait) => sum + character.traits[trait], 0) /
+        (dominantTraits.length * 10);
+      const similarity =
+        cosineSimilarity * 0.58 +
+        distanceSimilarity * 0.34 +
+        dominantAlignment * 0.08 +
+        tinyTieBreaker(character.id);
+
       return {
         character,
-        percentage: Math.min(99, Math.round(similarity * 100)),
+        percentage: Math.min(99, Math.max(72, Math.round(72 + similarity * 27))),
+        similarity,
       };
     })
-    .sort((a, b) => b.percentage - a.percentage);
+    .sort((a, b) => b.similarity - a.similarity);
 
   return ranked[0];
 }
