@@ -10,7 +10,7 @@ type ResultCardProps = {
   percentage: number;
   cardRef: React.RefObject<HTMLDivElement | null>;
   onDownload: () => void;
-  onShare: () => void;
+  onShare: () => Promise<void>;
   onRetake: () => void;
 };
 
@@ -57,16 +57,9 @@ export function ResultCard({
                     sizes="(max-width: 640px) 260px, 220px"
                     className="object-cover"
                     priority
+                    crossOrigin="anonymous"
                   />
                 </div>
-              </div>
-              <div className="mt-3 rounded-3xl border border-charcoal/10 bg-white px-4 py-3 text-center shadow-sm">
-                <p className="text-[0.62rem] font-black uppercase tracking-[0.16em] text-charcoal/45">
-                  Participant
-                </p>
-                <p className="mt-1 text-xl font-black leading-none text-charcoal">
-                  {name}
-                </p>
               </div>
             </div>
 

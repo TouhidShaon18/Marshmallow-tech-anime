@@ -168,12 +168,7 @@ export default function Home() {
 
     setIsDownloading(true);
     try {
-      const html2canvas = (await import("html2canvas")).default;
-      const canvas = await html2canvas(resultCardRef.current, {
-        backgroundColor: "#FFFFFF",
-        scale: 2,
-        useCORS: true,
-      });
+      const canvas = await renderResultCard();
       const link = document.createElement("a");
       link.download = `${displayName.toLowerCase().replace(/[^a-z0-9]+/g, "-")}-anime-match.png`;
       link.href = canvas.toDataURL("image/png");
@@ -183,7 +178,21 @@ export default function Home() {
     }
   }
 
-  function shareOnFacebook() {
+  async function renderResultCard() {
+    if (!resultCardRef.current) {
+      throw new Error("Result card is not ready yet.");
+    }
+
+    const html2canvas = (await import("html2canvas")).default;
+    return html2canvas(resultCardRef.current, {
+      backgroundColor: "#FFFFFF",
+      scale: 2,
+      useCORS: true,
+      allowTaint: false,
+    });
+  }
+
+  async function shareOnFacebook() {
     const text = match
       ? `${displayName} matched with ${match.character.name} at ${match.percentage}% on Marshmallow Tech's anime quiz. Built for Fans. By Fans.`
       : "I found my anime match on Marshmallow Tech.";
@@ -191,6 +200,34 @@ export default function Home() {
       typeof window !== "undefined"
         ? window.location.href
         : "https://marshmallow.tech";
+    try {
+      const canvas = await renderResultCard();
+      const blob = await new Promise<Blob | null>((resolve) => {
+        canvas.toBlob(resolve, "image/png");
+      });
+
+      if (!blob) {
+        throw new Error("Could not generate share image.");
+      }
+
+      const file = new File(
+        [blob],
+        `${displayName.toLowerCase().replace(/[^a-z0-9]+/g, "-")}-anime-match.png`,
+        { type: "image/png" },
+      );
+
+      if (navigator.canShare?.({ files: [file] })) {
+        await navigator.share({
+          title: "My Marshmallow Tech Anime Match",
+          text,
+          files: [file],
+        });
+        return;
+      }
+    } catch {
+      // Fall back to Facebook's web share dialog when direct image sharing is unavailable.
+    }
+
     const url = new URL("https://www.facebook.com/sharer/sharer.php");
     url.searchParams.set("u", shareUrl);
     url.searchParams.set("quote", text);
