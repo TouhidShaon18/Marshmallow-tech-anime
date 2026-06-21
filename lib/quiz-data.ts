@@ -7,6 +7,7 @@ export type Trait =
   | "freedom";
 
 export type TraitScores = Record<Trait, number>;
+export type Gender = "male" | "female";
 
 export type QuizOption = {
   label: string;
@@ -22,6 +23,7 @@ export type Question = {
 export type Character = {
   id: string;
   name: string;
+  gender: Gender;
   anime: string;
   image: string;
   quote: string;
@@ -136,6 +138,7 @@ export const characters: Character[] = [
   {
     id: "naruto",
     name: "Naruto",
+    gender: "male",
     anime: "Naruto",
     image: "https://cdn.myanimelist.net/images/characters/2/284121.jpg",
     quote: "I never go back on my word.",
@@ -146,6 +149,7 @@ export const characters: Character[] = [
   {
     id: "luffy",
     name: "Luffy",
+    gender: "male",
     anime: "One Piece",
     image: "https://cdn.myanimelist.net/images/characters/9/310307.jpg",
     quote: "Freedom looks good on you.",
@@ -156,6 +160,7 @@ export const characters: Character[] = [
   {
     id: "levi",
     name: "Levi",
+    gender: "male",
     anime: "Attack on Titan",
     image: "https://cdn.myanimelist.net/images/characters/12/622510.jpg",
     quote: "Choose, then own the outcome.",
@@ -166,6 +171,7 @@ export const characters: Character[] = [
   {
     id: "gojo",
     name: "Gojo",
+    gender: "male",
     anime: "Jujutsu Kaisen",
     image: "https://cdn.myanimelist.net/images/characters/15/422168.jpg",
     quote: "Confidence is part of the technique.",
@@ -176,6 +182,7 @@ export const characters: Character[] = [
   {
     id: "itachi",
     name: "Itachi",
+    gender: "male",
     anime: "Naruto",
     image: "https://cdn.myanimelist.net/images/characters/9/284122.jpg",
     quote: "A calm mind can carry heavy things.",
@@ -186,6 +193,7 @@ export const characters: Character[] = [
   {
     id: "tanjiro",
     name: "Tanjiro",
+    gender: "male",
     anime: "Demon Slayer",
     image: "https://cdn.myanimelist.net/images/characters/6/386735.jpg",
     quote: "Gentleness is also strength.",
@@ -196,6 +204,7 @@ export const characters: Character[] = [
   {
     id: "eren",
     name: "Eren",
+    gender: "male",
     anime: "Attack on Titan",
     image: "https://cdn.myanimelist.net/images/characters/10/216895.jpg",
     quote: "Forward is the only direction.",
@@ -206,6 +215,7 @@ export const characters: Character[] = [
   {
     id: "goku",
     name: "Goku",
+    gender: "male",
     anime: "Dragon Ball",
     image: "https://cdn.myanimelist.net/images/characters/16/618693.jpg",
     quote: "There is always another level.",
@@ -216,6 +226,7 @@ export const characters: Character[] = [
   {
     id: "zoro",
     name: "Zoro",
+    gender: "male",
     anime: "One Piece",
     image: "https://cdn.myanimelist.net/images/characters/3/100534.jpg",
     quote: "Discipline is its own compass.",
@@ -226,6 +237,7 @@ export const characters: Character[] = [
   {
     id: "hinata-shoyo",
     name: "Hinata Shoyo",
+    gender: "male",
     anime: "Haikyuu!!",
     image: "https://cdn.myanimelist.net/images/characters/11/243919.jpg",
     quote: "Small wings can still fly high.",
@@ -236,6 +248,7 @@ export const characters: Character[] = [
   {
     id: "frieren",
     name: "Frieren",
+    gender: "female",
     anime: "Frieren: Beyond Journey's End",
     image: "https://cdn.myanimelist.net/images/characters/7/525105.jpg",
     quote: "Time makes the small things shine.",
@@ -246,6 +259,7 @@ export const characters: Character[] = [
   {
     id: "sung-jin-woo",
     name: "Sung Jin-Woo",
+    gender: "male",
     anime: "Solo Leveling",
     image: "https://cdn.myanimelist.net/images/characters/2/540692.jpg",
     quote: "The climb changed you.",
@@ -265,7 +279,7 @@ export function addScores(total: TraitScores, addition: Partial<TraitScores>) {
   );
 }
 
-export function getCharacterMatch(scores: TraitScores) {
+export function getCharacterMatch(scores: TraitScores, gender: Gender) {
   const traits = Object.keys(scores) as Trait[];
   const highestTraitScore = Math.max(...traits.map((trait) => scores[trait]), 1);
   const profile = traits.reduce<TraitScores>(
@@ -291,7 +305,9 @@ export function getCharacterMatch(scores: TraitScores) {
     return hash / 99700;
   }
 
-  const ranked = characters
+  const eligibleCharacters = characters.filter((character) => character.gender === gender);
+
+  const ranked = eligibleCharacters
     .map((character) => {
       const distance = traits.reduce((sum, trait) => {
         return sum + Math.pow(profile[trait] - character.traits[trait], 2);

@@ -14,6 +14,7 @@ import {
   getCharacterMatch,
   questions,
   type Character,
+  type Gender,
   type Question,
   type QuizOption,
   type TraitScores,
@@ -64,6 +65,7 @@ function readDailyUsage(): DailyUsage {
 export default function Home() {
   const [stage, setStage] = useState<Stage>("name");
   const [name, setName] = useState("");
+  const [gender, setGender] = useState<Gender | "">("");
   const [activeQuestions, setActiveQuestions] = useState<Question[]>(() =>
     questions.slice(0, QUESTION_COUNT),
   );
@@ -72,25 +74,21 @@ export default function Home() {
   const [scores, setScores] = useState<TraitScores>(emptyScores);
   const [match, setMatch] = useState<MatchResult | null>(null);
   const [isDownloading, setIsDownloading] = useState(false);
-  const [resultsUsedToday, setResultsUsedToday] = useState(0);
   const [limitMessage, setLimitMessage] = useState("");
   const resultCardRef = useRef<HTMLDivElement>(null);
 
   const displayName = name.trim() || "Fan";
-  const remainingResults = Math.max(0, DAILY_RESULT_LIMIT - resultsUsedToday);
 
   useEffect(() => {
-    setResultsUsedToday(readDailyUsage().count);
     setActiveQuestions(pickDailyQuestions());
   }, []);
 
   function startQuiz(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
-    if (!name.trim()) {
+    if (!name.trim() || !gender) {
       return;
     }
     const usage = readDailyUsage();
-    setResultsUsedToday(usage.count);
 
     if (usage.count >= DAILY_RESULT_LIMIT) {
       setLimitMessage("You can generate 2 anime results per day. Come back tomorrow for a fresh match.");
@@ -114,16 +112,19 @@ export default function Home() {
     };
 
     window.localStorage.setItem(DAILY_LIMIT_STORAGE_KEY, JSON.stringify(nextUsage));
-    setResultsUsedToday(nextUsage.count);
   }
 
   function answerQuestion(option: QuizOption, optionIndex: number) {
+    if (!gender) {
+      return;
+    }
+
     setSelectedOption(optionIndex);
     const nextScores = addScores(scores, option.scores);
 
     window.setTimeout(() => {
       if (currentQuestion === activeQuestions.length - 1) {
-        const result = getCharacterMatch(nextScores);
+        const result = getCharacterMatch(nextScores, gender);
         setScores(nextScores);
         setMatch(result);
         recordResultGeneration();
@@ -292,7 +293,7 @@ export default function Home() {
               Enter your name, choose your instincts, and let the Marshmallow Tech match engine reveal your anime alter ego.
             </p>
             <div className="mt-7 flex flex-wrap gap-2">
-              {["5 questions", `${remainingResults}/2 today`, "Spin reveal"].map((item) => (
+              {["5 questions", "Spin reveal", "PNG photocard"].map((item) => (
                 <span
                   key={item}
                   className="rounded-full bg-white/80 px-4 py-2 text-sm font-black text-charcoal shadow-sm"
@@ -320,17 +321,43 @@ export default function Home() {
                   className="mt-4 h-16 w-full rounded-3xl border border-charcoal/10 bg-white px-5 text-xl font-black text-charcoal outline-none transition placeholder:text-charcoal/30 focus:border-electric focus:ring-4 focus:ring-electric/15"
                   maxLength={28}
                 />
+                <div className="mt-5">
+                  <p className="text-sm font-black uppercase tracking-[0.18em] text-electric">
+                    Gender
+                  </p>
+                  <div className="mt-3 grid grid-cols-2 gap-3">
+                    {([
+                      ["male", "Male"],
+                      ["female", "Female"],
+                    ] as const).map(([value, label]) => (
+                      <button
+                        key={value}
+                        type="button"
+                        onClick={() => setGender(value)}
+                        className={`min-h-12 rounded-2xl border px-4 py-3 text-sm font-black transition ${
+                          gender === value
+                            ? "border-electric bg-electric text-white shadow-blue"
+                            : "border-charcoal/10 bg-white text-charcoal shadow-sm hover:-translate-y-0.5 hover:border-lavender"
+                        }`}
+                      >
+                        {label}
+                      </button>
+                    ))}
+                  </div>
+                </div>
                 <button
                   type="submit"
-                  disabled={!name.trim() || remainingResults === 0}
+                  disabled={!name.trim() || !gender}
                   className="mt-5 inline-flex min-h-14 w-full items-center justify-center gap-2 rounded-3xl bg-charcoal px-5 py-4 text-base font-black text-white shadow-blue transition hover:-translate-y-0.5 disabled:cursor-not-allowed disabled:opacity-45 disabled:hover:translate-y-0"
                 >
                   Start Quiz
                   <ArrowRight aria-hidden="true" className="h-5 w-5" />
                 </button>
-                <p className="mt-4 text-center text-sm font-bold text-charcoal/60">
-                  {limitMessage || `${remainingResults} result ${remainingResults === 1 ? "generation" : "generations"} left today.`}
-                </p>
+                {limitMessage && (
+                  <p className="mt-4 text-center text-sm font-bold text-charcoal/60">
+                    {limitMessage}
+                  </p>
+                )}
               </form>
             )}
 
