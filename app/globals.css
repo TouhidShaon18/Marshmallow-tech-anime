@@ -1,0 +1,36 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --background: #ffffff;
+  --foreground: #2e2e2e;
+  --font-display: "Inter", ui-sans-serif, system-ui;
+  --font-sans: "Inter", ui-sans-serif, system-ui;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  min-height: 100vh;
+  color: var(--foreground);
+  background:
+    radial-gradient(circle at 12% 14%, rgba(255, 182, 193, 0.42), transparent 25%),
+    radial-gradient(circle at 88% 8%, rgba(59, 130, 246, 0.24), transparent 28%),
+    linear-gradient(135deg, #ffffff 0%, #fff5fa 46%, #f4edff 100%);
+}
+
+button,
+input {
+  font: inherit;
+}
+
+.wheel-slice-label {
+  text-shadow: 0 1px 4px rgba(46, 46, 46, 0.28);
+}
