@@ -99,6 +99,23 @@ export function ResultCard({
             </div>
           </div>
 
+          <div className="mt-6 grid gap-3 rounded-3xl border border-electric/20 bg-gradient-to-r from-lavender/30 via-pink/35 to-electric/20 p-4 text-center sm:grid-cols-[1fr_auto] sm:items-center sm:text-left">
+            <div>
+              <p className="text-xs font-black uppercase tracking-[0.18em] text-electric">
+                Marshmallow reward
+              </p>
+              <p className="mt-1 text-lg font-black leading-tight text-charcoal">
+                Get 2% off your setup, no matter your anime match.
+              </p>
+            </div>
+            <div className="rounded-2xl bg-white px-4 py-3 shadow-sm ring-1 ring-charcoal/10">
+              <p className="text-[0.62rem] font-black uppercase tracking-[0.16em] text-charcoal/45">
+                Code
+              </p>
+              <p className="text-2xl font-black text-charcoal">Luffy</p>
+            </div>
+          </div>
+
           <div className="mt-6 rounded-3xl bg-charcoal p-4 text-center text-sm font-black uppercase tracking-[0.16em] text-white">
             Built for Fans. By Fans.
           </div>

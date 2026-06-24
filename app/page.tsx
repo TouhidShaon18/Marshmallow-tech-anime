@@ -25,6 +25,8 @@ type Stage = "name" | "quiz" | "spin" | "result";
 const DAILY_RESULT_LIMIT = 2;
 const QUESTION_COUNT = 5;
 const DAILY_LIMIT_STORAGE_KEY = "marshmallow-anime-quiz-daily-results";
+const STORE_URL = "https://marshmallow-tech.com/";
+const COUPON_CODE = "Luffy";
 
 type MatchResult = {
   character: Character;
@@ -168,6 +170,7 @@ export default function Home() {
       return;
     }
 
+    openStoreTab();
     setIsDownloading(true);
     try {
       const canvas = await renderResultCard();
@@ -195,8 +198,10 @@ export default function Home() {
   }
 
   async function shareOnFacebook() {
+    openStoreTab();
+
     const text = match
-      ? `${displayName} matched with ${match.character.name} at ${match.percentage}% on Marshmallow Tech's anime quiz. Built for Fans. By Fans.`
+      ? `${displayName} matched with ${match.character.name} at ${match.percentage}% on Marshmallow Tech's anime quiz. Use code ${COUPON_CODE} for 2% off at Marshmallow Tech.`
       : "I found my anime match on Marshmallow Tech.";
     const shareUrl =
       typeof window !== "undefined"
@@ -235,6 +240,10 @@ export default function Home() {
     url.searchParams.set("quote", text);
     url.searchParams.set("hashtag", "#MarshmallowTech");
     window.open(url.toString(), "_blank", "noopener,noreferrer");
+  }
+
+  function openStoreTab() {
+    window.open(STORE_URL, "_blank", "noopener,noreferrer");
   }
 
   function retakeQuiz() {
